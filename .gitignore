@@ -1,27 +1,39 @@
+# ─── Node Modules ─────────────────────────────────────
 node_modules/
 Frontend/node_modules/
 Backend/node_modules/
 
+# ─── Env ──────────────────────────────────────────────
 .env
-.env.*
+.env.local
+.env.production
+.env.development
 Frontend/.env
+Frontend/.env.local
+Frontend/.env.production
 Backend/.env
-!.env.example
+Backend/.env.local
+Backend/.env.production
 
+# ─── Build Output ─────────────────────────────────────
 Frontend/build/
 Frontend/dist/
 Backend/dist/
 
+# ─── Logs ─────────────────────────────────────────────
 logs/
 *.log
 npm-debug.log*
 
+# ─── OS ───────────────────────────────────────────────
 .DS_Store
 Thumbs.db
 
+# ─── Editor ───────────────────────────────────────────
 .vscode/
 .idea/
 
+# ─── Testing & Temp ───────────────────────────────────
 coverage/
 tmp/
 temp/
