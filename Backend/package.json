@@ -10,9 +10,9 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "test": "jest"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1055.0",
@@ -23,11 +23,12 @@
     "express": "^5.2.1",
     "express-validator": "^7.3.2",
     "helmet": "^8.2.0",
+    "ioredis": "^5.11.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.6.3",
     "morgan": "^1.10.1",
     "multer": "^2.1.1",
-    "redis": "^6.0.0",
+    "rate-limiter-flexible": "^11.1.0",
     "socket.io": "^4.8.3"
   },
   "devDependencies": {
