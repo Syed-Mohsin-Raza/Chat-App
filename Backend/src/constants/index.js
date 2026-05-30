@@ -1,5 +1,6 @@
 export const REDIS_TTL = {
   SESSION:   60 * 60 * 24 * 7,  // 7 days
+  REFRESH:   60 * 60 * 24 * 7,  // 7 days  
   PRESENCE:  60 * 2,             // 2 min
   BLACKLIST: 60 * 15,            // 15 min (max access token life)
   SOCKET:    60 * 60 * 24 * 7,  // 7 days
