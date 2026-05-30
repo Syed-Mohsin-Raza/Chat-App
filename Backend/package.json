@@ -14,6 +14,19 @@
     "dev": "nodemon server.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit"
   },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {},
+    "moduleNameMapper": {
+      "^(\\.\\./)*config/redis\\.js$": "<rootDir>/src/config/__mocks__/redis.js"
+    },
+    "testEnvironmentOptions": {
+      "env": {
+        "NODE_ENV": "test"
+      }
+    }
+  },
+
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1055.0",
     "@aws-sdk/s3-request-presigner": "^3.1055.0",
@@ -33,6 +46,7 @@
   },
   "devDependencies": {
     "jest": "^30.4.2",
+    "mongodb-memory-server": "^11.2.0",
     "nodemon": "^3.1.14",
     "supertest": "^7.2.2"
   }

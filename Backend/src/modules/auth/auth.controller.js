@@ -19,7 +19,7 @@ export const register = async (req, res, next) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ success: false, errors: errors.array() });
+            return res.status(422).json({ success: false, errors: errors.array() });
         }
 
         const { username, email, password } = req.body;
@@ -124,11 +124,11 @@ export const logout = async (req, res, next) => {
         const accessToken = req.headers.authorization?.split(' ')[1];
 
         await blacklistToken(accessToken);
-        await deleteSession(req.user.id);
+        await deleteSession(req.userId);
         if (refreshToken) {
             await deleteRefreshToken(refreshToken);
         }
-        await redis.del(`presence:${req.user.id}`); 
+        await redis.del(`presence:${req.userId}`); 
         res.json({ success: true, message: 'Logged out successfully' });
     } catch (err) {
         next(err);

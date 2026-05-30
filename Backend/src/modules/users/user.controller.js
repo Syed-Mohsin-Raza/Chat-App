@@ -7,7 +7,7 @@ import { REDIS_TTL, BCRYPT_ROUNDS } from "../../constants/index.js";
 // Get /users/me
 export const getMe = async (req, res, next) => {
     try {
-        const user = await User.findById(req.user.id);
+        const user = await User.findById(req.userId);
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
@@ -49,16 +49,16 @@ export const updateProfile = async (req, res, next) => {
         const { username, bio } = req.body;
 
         if (username) {
-            const exists = await User.findOne({ username, _id: { $ne: req.user.id } });
+            const exists = await User.findOne({ username, _id: { $ne: req.userId } });
             if (exists) {
                 return res.status(409).json({ success: false, message: 'Username already taken' });
             }
         }
 
         const updated = await User.findByIdAndUpdate(
-            req.user.id,
+            req.userId,
             { $set: { username, bio } },
-            { new: true, runValidators: true }
+            { returnDocument: 'after', runValidators: true }
         );
 
         res.json({ success: true, user: updated });
@@ -119,7 +119,7 @@ export const searchUsers = async (req, res, next) => {
                 { username: { $regex: q, $options: 'i' } },
                 { email: { $regex: q, $options: 'i' } },
             ],
-            _id: { $ne: req.user.id }
+            _id: { $ne: req.userId }
         })
             .select('username email avatar bio')
             .limit(20);
@@ -133,10 +133,10 @@ export const searchUsers = async (req, res, next) => {
 // DELETE /users/me
 export const deleteAccount = async (req, res, next) => {
     try {
-        await User.findByIdAndDelete(req.user.id);
+        await User.findByIdAndDelete(req.userId);
 
-        await redis.del(`session:${req.user.id}`);
-        await redis.del(`presence:${req.user.id}`);
+        await redis.del(`session:${req.userId}`);
+        await redis.del(`presence:${req.userId}`);
 
         res.json({ success: true, message: 'Account deleted successfully' });
     } catch (err) {

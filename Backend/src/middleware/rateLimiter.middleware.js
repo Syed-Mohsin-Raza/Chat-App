@@ -12,6 +12,11 @@ const limiter = new RateLimiterRedis({
 });
 
 export const authRateLimiter = async (req, res, next) => {
+  // skip rate limiting in tests
+  if (process.env.NODE_ENV === 'test') {
+    return next();
+  }
+
   try {
     await limiter.consume(req.ip);
     next();
