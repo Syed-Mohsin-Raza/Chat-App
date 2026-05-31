@@ -15,8 +15,8 @@ export const validateCreateGroupChat = [
     .withMessage('Group name 2–50 characters required'),
 
   body('members')
-    .isArray({ min: 2 })
-    .withMessage('At least 2 members required'),
+    .isArray({ min: 1 })
+    .withMessage('At least 1 member required'),
 
   body('members.*')
     .isMongoId()
