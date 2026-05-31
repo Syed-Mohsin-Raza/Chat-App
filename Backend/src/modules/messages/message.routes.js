@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   sendMessage,
+  sendMediaMessage,
   getMessages,
   markAsRead,
   deleteMessage,
@@ -11,10 +12,13 @@ import {
   validateGetMessages,
   validateMessageId,
 } from './message.validation.js';
+import { handleUploadError, uploadAttachment } from '../../middleware/upload.middleware.js';
 
 const router = Router();
 
 router.use(protect);
+
+router.post('/upload', uploadAttachment, handleUploadError, sendMediaMessage); // Separate route for media messages
 
 router.post('/', validateSendMessage, sendMessage);
 router.get('/:chatId', validateGetMessages, getMessages);
