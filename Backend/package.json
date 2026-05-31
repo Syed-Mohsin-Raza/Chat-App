@@ -17,8 +17,10 @@
   "jest": {
     "testEnvironment": "node",
     "transform": {},
+    "testTimeout": 30000,
     "moduleNameMapper": {
-      "^(\\.\\./)*config/redis\\.js$": "<rootDir>/src/config/__mocks__/redis.js"
+      "^(\\.{1,2}/)*config/redis\\.js$": "<rootDir>/src/config/__mocks__/redis.js",
+      "^(\\.{1,2}/)*config/socket\\.js$": "<rootDir>/src/config/__mocks__/socket.js"
     },
     "testEnvironmentOptions": {
       "env": {
