@@ -20,7 +20,8 @@
     "testTimeout": 30000,
     "moduleNameMapper": {
       "^(\\.{1,2}/)*config/redis\\.js$": "<rootDir>/src/config/__mocks__/redis.js",
-      "^(\\.{1,2}/)*config/socket\\.js$": "<rootDir>/src/config/__mocks__/socket.js"
+      "^(\\.{1,2}/)*config/socket\\.js$": "<rootDir>/src/config/__mocks__/socket.js",
+      "^(\\.{1,2}/)*utils/s3\\.util\\.js$": "<rootDir>/src/utils/__mocks__/s3.util.js"
     },
     "testEnvironmentOptions": {
       "env": {
@@ -50,6 +51,7 @@
     "jest": "^30.4.2",
     "mongodb-memory-server": "^11.2.0",
     "nodemon": "^3.1.14",
+    "socket.io-client": "^4.8.3",
     "supertest": "^7.2.2"
   }
 }
