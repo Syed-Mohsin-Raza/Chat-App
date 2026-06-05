@@ -1,4 +1,3 @@
-import { selectFields } from "express-validator/lib/field-selection";
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
