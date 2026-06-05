@@ -4,13 +4,13 @@ import { REDIS_TTL } from '../constants/index.js';
 export const registerChatSocket = (io, socket) => {
   const userId = socket.userId;
 
-  // ─── Join Chat Room ────────────────────────────────
+  // Join Chat Room
   socket.on('chat:join', async (chatId) => {
     try {
       if (!chatId) return;
 
       socket.join(chatId);
-      console.log(`👤 ${userId} joined room: ${chatId}`);
+      console.log(`${userId} joined room: ${chatId}`);
 
       // Track active room — slides TTL on every join
       await redis.setex(
@@ -23,15 +23,15 @@ export const registerChatSocket = (io, socket) => {
     }
   });
 
-  // ─── Leave Chat Room ────────────────────────────────
+  // Leave Chat Room 
   socket.on('chat:leave', async (chatId) => {
     try {
       if (!chatId) return;
 
       socket.leave(chatId);
-      console.log(`👤 ${userId} left room: ${chatId}`);
+      console.log(`${userId} left room: ${chatId}`);
 
-      // ✅ Clear active room explicitly
+      // Clear active room explicitly
       await redis.del(`activeRoom:${userId}`);
     } catch (err) {
       console.error('chat:leave error:', err.message);

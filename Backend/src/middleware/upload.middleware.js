@@ -26,7 +26,7 @@ const SIZE_LIMITS = {
 
 // ─── Memory storage ───────────────────────────────────
 // File stays in RAM as buffer → directly streamed to S3
-// No disk usage ✅
+// No disk usage 
 const storage = multer.memoryStorage();
 
 // ─── Avatar upload ────────────────────────────────────

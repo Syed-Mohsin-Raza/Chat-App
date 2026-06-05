@@ -45,7 +45,7 @@ export const initSocket = (httpServer) => {
   // ─── Connection Manager ──────────────────────────────
   io.on('connection', async (socket) => {
     const userId = socket.userId;
-    console.log(`🔌 Connected: ${socket.id} | User: ${userId}`);
+    console.log(`Connected: ${socket.id} | User: ${userId}`);
 
     try {
       // Track multi-device socket mapping
@@ -58,13 +58,13 @@ export const initSocket = (httpServer) => {
       // Notify others
       socket.broadcast.emit('user:status', { userId, isOnline: true });
 
-      // ✅ Register feature handlers — no presence logic here
+      // Register feature handlers — no presence logic here
       registerSocketHandlers(io, socket);
 
       // ─── Disconnect Lifecycle ──────────────────────
       socket.on('disconnect', async () => {
         try {
-          console.log(`🛑 Disconnected: ${socket.id} | User: ${userId}`);
+          console.log(`Disconnected: ${socket.id} | User: ${userId}`);
 
           // Remove THIS socket from user's set
           await Promise.all([
@@ -76,23 +76,23 @@ export const initSocket = (httpServer) => {
           const remaining = await redis.smembers(`socket:${userId}`);
 
           if (remaining.length === 0) {
-            // ✅ ALL devices disconnected — cleanup presence globally
+            // ALL devices disconnected — cleanup presence globally
             await Promise.all([
               redis.del(`presence:${userId}`),
               redis.del(`activeRoom:${userId}`),
             ]);
 
-            // ✅ Safe typing cleanup — pass array directly
+            // Safe typing cleanup — pass array directly
             const typingKeys = await redis.keys(`typing:*:${userId}`);
             if (typingKeys.length > 0) {
               await redis.del(typingKeys); // array, not spread
             }
 
             socket.broadcast.emit('user:status', { userId, isOnline: false });
-            console.log(`👤 User offline (all devices): ${userId}`);
+            console.log(`User offline (all devices): ${userId}`);
           } else {
             // User still has other devices connected
-            console.log(`👤 User still online (${remaining.length} device(s)): ${userId}`);
+            console.log(`User still online (${remaining.length} device(s)): ${userId}`);
           }
         } catch (err) {
           console.error('Disconnect cleanup error:', err.message);
