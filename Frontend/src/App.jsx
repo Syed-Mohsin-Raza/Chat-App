@@ -8,44 +8,76 @@ import ChatWindow from './components/Chat/ChatWindow';
 import Navbar from './components/Common/Navbar';
 import './App.css';
 
-function App() {
-  const { token, checkAuth } = useAuthStore();
+// Protected route guard component
+const ProtectedRoute = ({ children }) => {
+  const { token } = useAuthStore();
+  return token ? children : <Navigate to="/login" replace />;
+};
 
-  // Check auth on mount
+// Public route guard component
+const PublicRoute = ({ children }) => {
+  const { token } = useAuthStore();
+  return !token ? children : <Navigate to="/chats" replace />;
+};
+
+function App() {
+  const { checkAuth, isLoading } = useAuthStore();
+
+  // Add checkAuth to dependency array
   useEffect(() => {
     checkAuth();
-  }, []);
+  }, [checkAuth]);
+
+  // Loading screen prevents layout flash during auth verification
+  if (isLoading) {
+    return (
+      <div className="app-loading-screen">
+        <div className="spinner"></div>
+        <p>Verifying secure session...</p>
+      </div>
+    );
+  }
 
   return (
     <BrowserRouter>
       <Routes>
         {/* Public Routes */}
-        <Route path="/login" element={!token ? <Login /> : <Navigate to="/chats" />} />
-        <Route path="/register" element={!token ? <Register /> : <Navigate to="/chats" />} />
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <PublicRoute>
+              <Register />
+            </PublicRoute>
+          }
+        />
 
-        {/* Protected Routes */}
-        {token ? (
-          <>
-            <Route
-              path="/chats"
-              element={
-                <>
-                  <Navbar />
-                  <div className="chats-container">
-                    <ChatList />
-                    <ChatWindow />
-                  </div>
-                </>
-              }
-            />
-            <Route path="/" element={<Navigate to="/chats" />} />
-          </>
-        ) : (
-          <Route path="*" element={<Navigate to="/login" />} />
-        )}
+        {/* Protected Routes — Static configuration */}
+        <Route
+          path="/chats"
+          element={
+            <ProtectedRoute>
+              <>
+                <Navbar />
+                <div className="chats-container">
+                  <ChatList />
+                  <ChatWindow />
+                </div>
+              </>
+            </ProtectedRoute>
+          }
+        />
 
-        {/* Fallback */}
-        <Route path="*" element={<Navigate to={token ? '/chats' : '/login'} />} />
+        {/* Fallback Routes */}
+        <Route path="/" element={<Navigate to="/chats" replace />} />
+        <Route path="*" element={<Navigate to="/chats" replace />} />
       </Routes>
     </BrowserRouter>
   );
