@@ -1,14 +1,17 @@
 import { create } from 'zustand';
-import API from '../services/api';
+import API, { registerUnauthorizedHandler } from '../services/api';
 import { initSocket, closeSocket } from '../services/socket';
 
 const useAuthStore = create((set, get) => ({
   user: null,
-  token: localStorage.getItem('accessToken') || null,
+  token: typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null,
   isLoading: false,
   error: null,
 
-  // Login
+  // Clear stale errors when switching routes
+  clearError: () => set({ error: null }),
+
+  // Login Action
   login: async (email, password) => {
     set({ isLoading: true, error: null });
     try {
@@ -16,9 +19,10 @@ const useAuthStore = create((set, get) => ({
       const { accessToken, user } = res.data;
 
       localStorage.setItem('accessToken', accessToken);
+      
+      // State set BEFORE socket init
       set({ user, token: accessToken, isLoading: false });
 
-      // Initialize socket after login
       initSocket(accessToken);
     } catch (err) {
       set({
@@ -29,7 +33,7 @@ const useAuthStore = create((set, get) => ({
     }
   },
 
-  // Register
+  // Register Action
   register: async (username, email, password) => {
     set({ isLoading: true, error: null });
     try {
@@ -53,33 +57,51 @@ const useAuthStore = create((set, get) => ({
     }
   },
 
-  // Logout
+  // Logout Action
   logout: async () => {
+    set({ isLoading: true });
     try {
       await API.post('/auth/logout');
     } catch (err) {
-      console.error('Logout error:', err);
+      console.error('Logout failed:', err);
+    } finally {
+      localStorage.removeItem('accessToken');
+      closeSocket();
+      set({ user: null, token: null, isLoading: false, error: null });
     }
-
-    localStorage.removeItem('accessToken');
-    closeSocket();
-    set({ user: null, token: null });
   },
 
-  // Check auth status
+  // Check auth on app mount
   checkAuth: async () => {
     const token = localStorage.getItem('accessToken');
-    if (!token) return;
 
+    if (!token) {
+      set({ user: null, token: null, isLoading: false, error: null });
+      return;
+    }
+
+    set({ isLoading: true, error: null });
     try {
       const res = await API.get('/users/me');
-      set({ user: res.data.user, token });
+      
+      set({ user: res.data.user, token, isLoading: false });
+
       initSocket(token);
     } catch (err) {
+      console.error('Session validation failed:', err.message);
       localStorage.removeItem('accessToken');
-      set({ user: null, token: null });
+      closeSocket();
+      set({ user: null, token: null, isLoading: false, error: null });
     }
   },
 }));
+
+// Register handler dynamically after store creation
+// Breaks circular chain while keeping handler clean and functional
+registerUnauthorizedHandler(() => {
+  console.log('Auth Interceptor: token invalid, clearing state');
+  closeSocket();
+  useAuthStore.setState({ user: null, token: null, isLoading: false, error: null });
+});
 
 export default useAuthStore;
