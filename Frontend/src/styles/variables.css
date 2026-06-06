@@ -1,105 +1,37 @@
-@import '../../styles/variables.css';
+:root {
+  /* ─── Premium Glassmorphism Color Tokens ─── */
+  --bg-main: #0B0F19;         /* Rich, obsidian-void canvas */
+  --bg-surface: #131A26;      /* Elevated primary layers */
+  --bg-surface-hover: #1E293B;/* Kinetic active focus state */
+  --bg-bubble-self: #2563EB;  /* Deep Electric Blue */
+  --bg-bubble-them: #1F2937;  /* Muted Charcoal Glass */
 
-.chat-window {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background: white;
-}
+  /* Text Hierarchies */
+  --text-main: #F8FAFC;       /* Off-white crisp text */
+  --text-muted: #94A3B8;      /* Low-contrast structural labels */
+  --text-dim: #64748B;        /* Placeholders & time stamps */
 
-.chat-header {
-  padding: var(--spacing-lg);
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-  background: var(--bg-light);
-}
+  /* Accents & Status Indicators */
+  --accent: #3B82F6;          /* Cyber Blue glow */
+  --accent-glow: rgba(59, 130, 246, 0.25);
+  --success: #10B981;         /* True emerald online pulse */
+  --danger: #EF4444;          /* Crimson system validation alert */
+  --border: rgba(255, 255, 255, 0.06); /* Ultra-thin translucent dividing line */
 
-.chat-header h3 {
-  margin: 0;
-  font-size: 18px;
-  color: var(--text-dark);
-}
+  /* Structural Geometry */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-round: 50%;
 
-.chat-messages {
-  flex: 1;
-  overflow-y: auto;
-  padding: var(--spacing-lg);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-}
+  /* High-end Depth Vectors */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
 
-.empty-chat {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: var(--text-light);
-  text-align: center;
-}
-
-.empty-chat p {
-  font-size: 18px;
-  font-weight: 500;
-  margin-bottom: var(--spacing-sm);
-}
-
-.empty-chat small {
-  font-size: 14px;
-}
-
-.chat-input-area {
-  display: flex;
-  gap: var(--spacing-md);
-  padding: var(--spacing-lg);
-  border-top: 1px solid var(--border);
-  flex-shrink: 0;
-  background: var(--bg-light);
-}
-
-.chat-input-area textarea {
-  flex: 1;
-  padding: var(--spacing-md);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  font-family: inherit;
-  font-size: 14px;
-  resize: none;
-  max-height: 100px;
-}
-
-.chat-input-area button {
-  padding: var(--spacing-md) var(--spacing-lg);
-  background: var(--primary);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-}
-
-.chat-input-area button:hover {
-  background: var(--secondary);
-  transform: translateY(-2px);
-}
-
-@media (max-width: 768px) {
-  .chat-window {
-    display: none;
-  }
-
-  .chat-window.active {
-    display: flex;
-  }
-}
-
-@media (max-width: 480px) {
-  .chat-header,
-  .chat-messages,
-  .chat-input-area {
-    padding: var(--spacing-md);
-  }
+  /* Kinetic Transitions */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); /* Apple-style friction slide */
+  --transition-fast: 0.15s var(--ease-out);
+  --transition-normal: 0.25s var(--ease-out);
 }

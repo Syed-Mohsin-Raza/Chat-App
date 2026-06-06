@@ -1,0 +1,49 @@
+/* Hardware accelerated rendering loops */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { transform: scale(1); opacity: 0.9; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  50% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 12px 4px rgba(16, 185, 129, 0.6); }
+}
+
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes messagePop {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Helper Application Utilities */
+.animate-spin-loop {
+  animation: spin 0.8s linear infinite;
+}
+
+.animate-online-pulse {
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+.animate-fade-in-up {
+  animation: slideUpFade 0.4s var(--ease-out) forwards;
+}
+
+.animate-message {
+  animation: messagePop 0.2s var(--ease-out) forwards;
+}
