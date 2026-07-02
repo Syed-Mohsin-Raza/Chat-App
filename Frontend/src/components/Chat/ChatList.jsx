@@ -8,13 +8,23 @@ export default function ChatList() {
   const { chats, selectedChat, fetchChats, searchChats, selectChat, loading } = useChatStore();
 
   useEffect(() => {
+    console.log('ChatList mounted');
     fetchChats();
-  }, [fetchChats]);
+  }, []);
+
+  useEffect(() => {
+    console.log('Chats updated:', chats);
+  }, [chats]);
 
   const handleSearch = (e) => {
     const value = e.target.value;
     setSearch(value);
     searchChats(value);
+  };
+
+  const handleSelectChat = (chatId) => {
+    console.log('Selecting chat:', chatId);
+    selectChat(chatId);
   };
 
   return (
@@ -50,25 +60,28 @@ export default function ChatList() {
             <p className="chat-list-empty-subtext">Start a new chat to begin messaging</p>
           </div>
         ) : (
-          chats.map((chat) => (
-            <div
-              key={chat._id}
-              onClick={() => selectChat(chat._id)}
-              className={`chat-item ${selectedChat?._id === chat._id ? 'active' : ''}`}
-            >
-              <div className="chat-item-header">
-                <h3 className="chat-item-name">
-                  {chat.isGroup ? chat.name : chat.participants[0]?.username}
-                </h3>
-                <span className="chat-item-time">
-                  {new Date(chat.lastMessage?.createdAt || chat.createdAt).toLocaleDateString()}
-                </span>
+          chats.map((chat) => {
+            console.log('Rendering chat:', chat.name);
+            return (
+              <div
+                key={chat._id}
+                onClick={() => handleSelectChat(chat._id)}
+                className={`chat-item ${selectedChat?._id === chat._id ? 'active' : ''}`}
+              >
+                <div className="chat-item-header">
+                  <h3 className="chat-item-name">
+                    {chat.isGroup ? chat.name : chat.participants[0]?.username || chat.name}
+                  </h3>
+                  <span className="chat-item-time">
+                    {new Date(chat.lastMessage?.createdAt || chat.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+                <p className="chat-item-preview">
+                  {chat.lastMessage?.content || 'No messages yet'}
+                </p>
               </div>
-              <p className="chat-item-preview">
-                {chat.lastMessage?.content || 'No messages yet'}
-              </p>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>

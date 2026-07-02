@@ -20,8 +20,16 @@ export default function ChatWindow() {
     typingUsers,
   } = useChatStore();
 
-  // Scroll to bottom when messages update
   useEffect(() => {
+    console.log('ChatWindow mounted');
+  }, []);
+
+  useEffect(() => {
+    console.log('selectedChat changed:', selectedChat);
+  }, [selectedChat]);
+
+  useEffect(() => {
+    console.log('messages changed:', messages);
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
@@ -33,16 +41,19 @@ export default function ChatWindow() {
       const socket = getSocket();
 
       const handleNewMessage = (msg) => {
+        console.log('New message received:', msg);
         addMessage(msg);
       };
 
       const handleTyping = (data) => {
+        console.log('User typing:', data);
         useChatStore.setState((state) => ({
           typingUsers: { ...state.typingUsers, [data.userId]: data.username },
         }));
       };
 
       const handleStopTyping = (data) => {
+        console.log('User stopped typing:', data);
         useChatStore.setState((state) => {
           const updated = { ...state.typingUsers };
           delete updated[data.userId];
@@ -66,7 +77,11 @@ export default function ChatWindow() {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!message.trim()) return;
+    console.log('Sending message:', message);
+    if (!message.trim()) {
+      console.warn('Message is empty');
+      return;
+    }
 
     const msg = message;
     setMessage('');
@@ -74,7 +89,6 @@ export default function ChatWindow() {
     try {
       await sendMessage(msg);
 
-      // Emit typing stop
       try {
         const socket = getSocket();
         socket.emit('typing:stop', { chatId: selectedChat._id });
@@ -88,6 +102,7 @@ export default function ChatWindow() {
   };
 
   const handleTyping = (e) => {
+    console.log('User typing:', e.target.value);
     setMessage(e.target.value);
 
     if (!isTyping) {
@@ -100,12 +115,10 @@ export default function ChatWindow() {
       }
     }
 
-    // Clear previous timeout
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }
 
-    // Set new timeout
     typingTimeoutRef.current = setTimeout(() => {
       setIsTyping(false);
       try {
@@ -118,6 +131,7 @@ export default function ChatWindow() {
   };
 
   if (!selectedChat) {
+    console.log('No chat selected');
     return (
       <div className="chat-window-container">
         <div className="chat-header">
@@ -157,7 +171,7 @@ export default function ChatWindow() {
       <div className="chat-header">
         <div className="chat-header-content">
           <h3 className="chat-header-title">
-            {selectedChat.isGroup ? selectedChat.name : selectedChat.participants[0]?.username}
+            {selectedChat.isGroup ? selectedChat.name : selectedChat.participants[0]?.username || selectedChat.name}
           </h3>
           <p className="chat-header-subtitle">
             {Object.keys(typingUsers).length > 0
@@ -185,7 +199,7 @@ export default function ChatWindow() {
             {messages.map((msg, idx) => (
               <div
                 key={msg._id || idx}
-                className={`message ${msg.sender._id === 'YOUR_USER_ID' ? 'sent' : 'received'}`}
+                className={`message ${msg.sender._id === 'your-user-id' ? 'sent' : 'received'}`}
               >
                 <div className="message-content">
                   <p className="message-sender">{msg.sender.username}</p>
@@ -208,6 +222,7 @@ export default function ChatWindow() {
           value={message}
           onChange={handleTyping}
           className="chat-input"
+          autoFocus
         />
         <button type="submit" disabled={!message.trim()} className="chat-send-button">
           <BiSend className="text-lg" />
