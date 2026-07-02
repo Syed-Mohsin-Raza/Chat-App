@@ -1,7 +1,7 @@
 import { BiPlus, BiSearch } from 'react-icons/bi';
 import { useEffect, useState } from 'react';
 import useChatStore from '../../stores/chatStore';
-import '../styles/Chat.css';
+import '../../styles/Chat.css';
 
 export default function ChatList() {
   const [search, setSearch] = useState('');
