@@ -1,0 +1,334 @@
+/* ────────────────────────────────────────────── */
+/* CHAT LIST STYLES */
+/* ────────────────────────────────────────────── */
+
+.chat-list-container {
+  width: 100%;
+  background-color: rgb(30, 41, 59);
+  border-right: 1px solid rgb(51, 65, 85);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+@media (min-width: 640px) {
+  .chat-list-container {
+    width: 20rem;
+  }
+}
+
+.chat-list-header {
+  padding: 1rem;
+  border-bottom: 1px solid rgb(51, 65, 85);
+}
+
+.chat-list-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.chat-list-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.chat-list-button {
+  padding: 0.5rem;
+  background-color: transparent;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  color: rgb(139, 92, 246);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.chat-list-button:hover {
+  background-color: rgb(45, 55, 72);
+  color: rgb(155, 135, 250);
+}
+
+.chat-list-button svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Search Input */
+.chat-search {
+  position: relative;
+}
+
+.chat-search-input {
+  width: 100%;
+  padding-left: 2.5rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  background-color: rgb(55, 65, 81);
+  border: 1px solid rgb(75, 85, 99);
+  border-radius: 0.5rem;
+  color: rgb(241, 245, 249);
+  font-size: 0.875rem;
+  transition: border-color 0.3s ease;
+}
+
+.chat-search-input::placeholder {
+  color: rgb(148, 163, 184);
+}
+
+.chat-search-input:focus {
+  outline: none;
+  border-color: rgb(139, 92, 246);
+}
+
+.chat-search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgb(107, 114, 128);
+  pointer-events: none;
+}
+
+/* Chat List Items */
+.chat-list-items {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.chat-list-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.chat-list-empty-text {
+  color: rgb(203, 213, 225);
+  font-weight: 500;
+}
+
+.chat-list-empty-subtext {
+  color: rgb(148, 163, 184);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+/* Chat Item */
+.chat-item {
+  padding: 1rem;
+  border-bottom: 1px solid rgb(51, 65, 85);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.chat-item:hover {
+  background-color: rgb(45, 55, 72);
+}
+
+.chat-item.active {
+  background-color: rgb(55, 65, 81);
+  border-left: 4px solid rgb(139, 92, 246);
+  padding-left: calc(1rem - 4px);
+}
+
+.chat-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.chat-item-name {
+  font-weight: 600;
+  color: rgb(241, 245, 249);
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.chat-item-time {
+  font-size: 0.75rem;
+  color: rgb(148, 163, 184);
+}
+
+.chat-item-preview {
+  color: rgb(148, 163, 184);
+  font-size: 0.875rem;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* ────────────────────────────────────────────── */
+/* CHAT WINDOW STYLES */
+/* ────────────────────────────────────────────── */
+
+.chat-window-container {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  background-color: rgb(15, 23, 42);
+  height: 100%;
+}
+
+@media (min-width: 640px) {
+  .chat-window-container {
+    display: flex;
+  }
+
+  .chat-window-container.active {
+    display: flex;
+  }
+}
+
+/* Chat Header */
+.chat-header {
+  height: 4rem;
+  background-color: rgb(30, 41, 59);
+  border-bottom: 1px solid rgb(51, 65, 85);
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.chat-header-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-header-title {
+  color: white;
+  font-weight: 600;
+  margin: 0;
+}
+
+.chat-header-subtitle {
+  color: rgb(107, 114, 128);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+/* Chat Messages Area */
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-empty {
+  text-align: center;
+}
+
+.chat-empty-icon {
+  width: 4rem;
+  height: 4rem;
+  background-color: rgb(30, 41, 59);
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  color: rgb(107, 114, 128);
+}
+
+.chat-empty-icon svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+.chat-empty-text {
+  color: rgb(203, 213, 225);
+  font-weight: 500;
+}
+
+.chat-empty-subtext {
+  color: rgb(148, 163, 184);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+/* Chat Input Area */
+.chat-input-area {
+  height: 6rem;
+  background-color: rgb(30, 41, 59);
+  border-top: 1px solid rgb(51, 65, 85);
+  padding: 1rem;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background-color: rgb(55, 65, 81);
+  border: 1px solid rgb(75, 85, 99);
+  border-radius: 0.5rem;
+  color: rgb(241, 245, 249);
+  font-size: 0.875rem;
+  transition: border-color 0.3s ease;
+  font-family: inherit;
+}
+
+.chat-input::placeholder {
+  color: rgb(148, 163, 184);
+}
+
+.chat-input:focus {
+  outline: none;
+  border-color: rgb(139, 92, 246);
+}
+
+.chat-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Send Button */
+.chat-send-button {
+  padding: 0.75rem 1.5rem;
+  background-color: rgb(139, 92, 246);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.chat-send-button:hover:not(:disabled) {
+  background-color: rgb(124, 58, 237);
+  transform: translateY(-2px);
+}
+
+.chat-send-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.chat-send-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.chat-send-button svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
