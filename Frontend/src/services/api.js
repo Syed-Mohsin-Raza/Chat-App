@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getUnauthorizedHandler } from './authHandler';
 
 const API = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -7,22 +8,17 @@ const API = axios.create({
   },
 });
 
-// Add token to requests
+// Add token to ALL requests
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem('accessToken');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
+    console.log('Adding token to request:', token.substring(0, 20) + '...');
+  } else {
+    console.warn('No token found in localStorage');
   }
   return config;
 });
-
-// Lazy callback registry breaks circular import chain
-// API no longer imports authStore — store registers handler dynamically
-let onUnauthorizedCallback = null;
-
-export const registerUnauthorizedHandler = (callback) => {
-  onUnauthorizedCallback = callback;
-};
 
 // Volatile flag prevents parallel 401 cascades
 let redirectInProgress = false;
@@ -40,9 +36,10 @@ API.interceptors.response.use(
           
           localStorage.removeItem('accessToken');
           
-          // Call registered handler safely
-          if (onUnauthorizedCallback) {
-            onUnauthorizedCallback();
+          // Get handler from external module
+          const handler = getUnauthorizedHandler();
+          if (handler) {
+            handler();
           }
 
           window.location.href = '/login';
