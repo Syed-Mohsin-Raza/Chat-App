@@ -3,7 +3,7 @@ import { IoChatbubbleOutline } from 'react-icons/io5';
 import { useState, useEffect, useRef } from 'react';
 import useChatStore from '../../stores/chatStore';
 import { getSocket } from '../../services/socket';
-import '../styles/Chat.css';
+import '../../styles/Chat.css';
 
 export default function ChatWindow() {
   const [message, setMessage] = useState('');
