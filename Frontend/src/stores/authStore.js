@@ -1,103 +1,141 @@
 import { create } from 'zustand';
-import API, { registerUnauthorizedHandler } from '../services/api';
+import API from '../services/api';
+import { registerUnauthorizedHandler } from '../services/authHandler';
 import { initSocket, closeSocket } from '../services/socket';
 
-const useAuthStore = create((set, get) => ({
-  user: null,
-  token: typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null,
-  isLoading: false,
-  error: null,
+let globalUnauthorizedHandler = null;
 
-  // Clear stale errors when switching routes
-  clearError: () => set({ error: null }),
-
-  // Login Action
-  login: async (email, password) => {
-    set({ isLoading: true, error: null });
-    try {
-      const res = await API.post('/auth/login', { email, password });
-      const { accessToken, user } = res.data;
-
-      localStorage.setItem('accessToken', accessToken);
-      
-      // State set BEFORE socket init
-      set({ user, token: accessToken, isLoading: false });
-
-      initSocket(accessToken);
-    } catch (err) {
-      set({
-        error: err.response?.data?.message || 'Login failed',
-        isLoading: false,
-      });
-      throw err;
+const useAuthStore = create((set, get) => {
+  
+  if (typeof window !== 'undefined') {
+    if (globalUnauthorizedHandler) {
+      window.removeEventListener('auth:unauthorized', globalUnauthorizedHandler);
     }
-  },
 
-  // Register Action
-  register: async (username, email, password) => {
-    set({ isLoading: true, error: null });
-    try {
-      const res = await API.post('/auth/register', {
-        username,
-        email,
-        password,
-      });
-      const { accessToken, user } = res.data;
-
-      localStorage.setItem('accessToken', accessToken);
-      set({ user, token: accessToken, isLoading: false });
-
-      initSocket(accessToken);
-    } catch (err) {
-      set({
-        error: err.response?.data?.message || 'Registration failed',
-        isLoading: false,
-      });
-      throw err;
-    }
-  },
-
-  // Logout Action
-  logout: async () => {
-    set({ isLoading: true });
-    try {
-      await API.post('/auth/logout');
-    } catch (err) {
-      console.error('Logout failed:', err);
-    } finally {
-      localStorage.removeItem('accessToken');
+    globalUnauthorizedHandler = () => {
+      console.log('Auth interceptor: token invalid, clearing state');
       closeSocket();
       set({ user: null, token: null, isLoading: false, error: null });
-    }
-  },
+    };
 
-  // Check auth on app mount
-  checkAuth: async () => {
-    const token = localStorage.getItem('accessToken');
+    window.addEventListener('auth:unauthorized', globalUnauthorizedHandler);
+  }
 
-    if (!token) {
-      set({ user: null, token: null, isLoading: false, error: null });
-      return;
-    }
+  return {
+    user: null,
+    token: typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null,
+    isLoading: false,
+    error: null,
 
-    set({ isLoading: true, error: null });
-    try {
-      const res = await API.get('/users/me');
-      
-      set({ user: res.data.user, token, isLoading: false });
+    clearError: () => set({ error: null }),
 
-      initSocket(token);
-    } catch (err) {
-      console.error('Session validation failed:', err.message);
-      localStorage.removeItem('accessToken');
-      closeSocket();
-      set({ user: null, token: null, isLoading: false, error: null });
-    }
-  },
-}));
+    // Login Action
+    login: async (email, password) => {
+      set({ isLoading: true, error: null });
+      try {
+        console.log('Attempting login...');
+        const res = await API.post('/auth/login', { email, password });
+        console.log('Login response:', res.data);
+        
+        const { accessToken, user } = res.data;
 
-// Register handler dynamically after store creation
-// Breaks circular chain while keeping handler clean and functional
+        localStorage.setItem('accessToken', accessToken);
+        console.log('Token saved to localStorage:', accessToken.substring(0, 20) + '...');
+        
+        set({ user, token: accessToken, isLoading: false });
+        console.log('State updated, initializing socket...');
+
+        initSocket(accessToken);
+        
+      } catch (err) {
+        console.error('Login error:', err);
+        set({
+          error: err.response?.data?.message || 'Login failed',
+          isLoading: false,
+        });
+        throw err;
+      }
+    },
+
+    // Register Action
+    register: async (username, email, password) => {
+      set({ isLoading: true, error: null });
+      try {
+        console.log('Attempting registration...');
+        const res = await API.post('/auth/register', {
+          username,
+          email,
+          password,
+        });
+        console.log('Register response:', res.data);
+        
+        const { accessToken, user } = res.data;
+
+        localStorage.setItem('accessToken', accessToken);
+        console.log('Token saved to localStorage:', accessToken.substring(0, 20) + '...');
+        
+        set({ user, token: accessToken, isLoading: false });
+        console.log('State updated, initializing socket...');
+
+        initSocket(accessToken);
+        
+      } catch (err) {
+        console.error('Register error:', err);
+        set({
+          error: err.response?.data?.message || 'Registration failed',
+          isLoading: false,
+        });
+        throw err;
+      }
+    },
+
+    // Logout Action
+    logout: async () => {
+      set({ isLoading: true });
+      try {
+        console.log('Attempting logout...');
+        await API.post('/auth/logout');
+      } catch (err) {
+        console.error('Logout failed:', err);
+      } finally {
+        localStorage.removeItem('accessToken');
+        closeSocket();
+        set({ user: null, token: null, isLoading: false, error: null });
+        console.log('Logout complete');
+      }
+    },
+
+    // Check auth on app mount
+    checkAuth: async () => {
+      const token = localStorage.getItem('accessToken');
+      console.log('checkAuth called, token:', token ? token.substring(0, 20) + '...' : 'null');
+
+      if (!token) {
+        console.log('No token found');
+        set({ user: null, token: null, isLoading: false, error: null });
+        return;
+      }
+
+      set({ isLoading: true, error: null });
+      try {
+        console.log('Verifying token with backend...');
+        const res = await API.get('/users/me');
+        console.log('Token valid, user:', res.data.user);
+        
+        set({ user: res.data.user, token, isLoading: false });
+        initSocket(token);
+        
+      } catch (err) {
+        console.error('Session validation failed:', err.message);
+        localStorage.removeItem('accessToken');
+        closeSocket();
+        set({ user: null, token: null, isLoading: false, error: null });
+      }
+    },
+  };
+});
+
+// Register handler after store creation
 registerUnauthorizedHandler(() => {
   console.log('Auth Interceptor: token invalid, clearing state');
   closeSocket();
